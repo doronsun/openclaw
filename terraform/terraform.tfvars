@@ -1,0 +1,6 @@
+region               = "eu-central-1"
+vpc_id               = "vpc-0682063304da3cfb1"
+subnet_id            = "subnet-0f63d17d4620b3430"
+key_name             = "doron-key"
+master_instance_type = "t3.small"
+worker_instance_type = "t2.micro"
