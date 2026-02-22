@@ -36,3 +36,19 @@ spec:
           limits:
             memory: "512Mi"
             cpu: "500m"
+        livenessProbe:
+          exec:
+            command:
+            - python3
+            - -c
+            - "import os; exit(0 if os.environ.get('TELEGRAM_TOKEN') else 1)"
+          initialDelaySeconds: 30
+          periodSeconds: 30
+        readinessProbe:
+          exec:
+            command:
+            - python3
+            - -c
+            - "import os; exit(0 if os.environ.get('TELEGRAM_TOKEN') else 1)"
+          initialDelaySeconds: 15
+          periodSeconds: 15
