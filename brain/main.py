@@ -44,8 +44,18 @@ def save_context(chat_id: int, role: str, message: str):
     messages = messages[-10:]
     redis_client.setex(key, 3600, json.dumps(messages))
 
+def save_job_status(job_id: str, chat_id: int, agent_type: str, status: str):
+    key = f"job:{job_id}"
+    data = {
+        "chat_id": chat_id,
+        "agent_type": agent_type,
+        "status": status
+    }
+    redis_client.setex(key, 3600, json.dumps(data))
+
 def create_agent_job(task: str, agent_type: str, chat_id: int):
     job_id = uuid.uuid4().hex[:5]
+    save_job_status(job_id, chat_id, agent_type, "running")
     job = client.V1Job(
         metadata=client.V1ObjectMeta(
             name=f"agent-{chat_id}-{agent_type}-{job_id}",
@@ -69,6 +79,7 @@ def create_agent_job(task: str, agent_type: str, chat_id: int):
                                 client.V1EnvVar(name="ROLE", value=agent_type),
                                 client.V1EnvVar(name="TASK", value=task),
                                 client.V1EnvVar(name="CHAT_ID", value=str(chat_id)),
+                                client.V1EnvVar(name="JOB_ID", value=job_id),
                                 client.V1EnvVar(
                                     name="TELEGRAM_TOKEN",
                                     value_from=client.V1EnvVarSource(
@@ -102,7 +113,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     chat_id = update.message.chat_id
     save_context(chat_id, "user", message)
     agent_type = decide_agent(message)
-    await update.message.reply_text(f"מעביר למומחה {agent_type}... ⚙️")
+    await update.message.reply_text(f"⚙️ מעביר למומחה {agent_type}... אני עובד על זה, תכף חוזר!")
     create_agent_job(message, agent_type, chat_id)
 
 def main():
