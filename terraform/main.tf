@@ -143,6 +143,7 @@ resource "aws_instance" "master" {
     kubectl apply -f https://raw.githubusercontent.com/doronsun/openclaw/main/k8s/redis.yaml
     kubectl apply -f https://raw.githubusercontent.com/doronsun/openclaw/main/k8s/brain.yaml
     kubectl apply -f https://raw.githubusercontent.com/doronsun/openclaw/main/k8s/quota.yaml
+    kubectl apply -f https://raw.githubusercontent.com/doronsun/openclaw/main/k8s/network-policy.yaml
     rm /tmp/secret.json
   EOF
 
